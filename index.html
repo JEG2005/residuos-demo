@@ -1,146 +1,131 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#145a4b">
-  <title>Residuos | Mini demo</title>
-  <style>
-    *{box-sizing:border-box}
-    body{font:16px system-ui,-apple-system,Segoe UI,sans-serif;background:#f1f5f3;margin:0;color:#162a24}
-    main{max-width:780px;margin:0 auto;padding:24px 16px 42px}
-    header{background:#145a4b;color:white;padding:22px;border-radius:18px}
-    h1{font-size:1.65rem;margin:0 0 6px}header p{margin:0;color:#d6ede5}
-    section{background:white;border:1px solid #dbe4df;padding:20px;margin-top:16px;border-radius:16px;box-shadow:0 3px 8px #00000005}
-    h2{font-size:1.08rem;margin:0 0 16px}
-    label{display:block;font-size:.92rem;font-weight:650;margin:0 0 6px}
-    input,select,button{font:inherit;width:100%;border-radius:10px;padding:12px}
-    input,select{border:1px solid #bccac2;background:white;margin-bottom:15px}
-    input:focus,select:focus{outline:2px solid #72c3a9;outline-offset:1px}
-    button{border:0;background:#145a4b;color:white;font-weight:700;cursor:pointer}
-    button:disabled{opacity:.5;cursor:wait}
-    button.secondary{background:#e5f2ec;color:#145a4b;margin-top:10px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
-    .status{padding:10px 12px;border-radius:9px;background:#e5f2ec;margin:14px 0 0;font-size:.88rem}
-    .status.error{background:#fff0e8;color:#9a3219}
-    .summary{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:14px}
-    .summary strong{font-size:1.1rem}
-    .scroll{overflow:auto}table{border-collapse:collapse;width:100%;min-width:460px}
-    th,td{text-align:left;border-bottom:1px solid #e3e9e5;padding:11px 8px;font-size:.9rem}
-    th{font-size:.8rem;color:#607067}td:last-child,th:last-child{text-align:right}
-    small{color:#64746a;display:block;margin-top:13px}
-    @media(max-width:450px){.grid{grid-template-columns:1fr}main{padding:14px 11px 30px}section{padding:16px}}
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#174f43">
+<title>Control de Residuos · Versión 2</title>
+<style>
+:root{--green:#174f43;--green2:#24725d;--ink:#18302b;--muted:#63746d;--line:#dfe8e3;--bg:#f3f7f4;--warn:#a65c13;--bad:#aa352c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,'Segoe UI',Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}.shell{max-width:1080px;margin:auto;padding:22px 16px 66px}
+.hero{background:linear-gradient(115deg,#174f43,#27765f);color:#fff;padding:30px;border-radius:20px;display:flex;gap:15px;align-items:flex-start;justify-content:space-between}.hero h1{margin:0;font-size:clamp(23px,3vw,32px)}.hero p{margin:5px 0 0;color:#d4eee4}.pill{display:inline-flex;background:#ffffff20;color:#fff;font-size:11px;padding:6px 9px;border-radius:40px;white-space:nowrap;font-weight:700}.nav{display:flex;gap:9px;flex-wrap:wrap;margin:20px 0}.nav button{background:#fff;color:var(--green);border:1px solid var(--line);padding:12px 16px;border-radius:11px;font-weight:700}.nav button.active{background:var(--green);border-color:var(--green);color:#fff}
+.status{padding:11px 14px;border:1px solid #b9ded0;background:#eaf6f0;color:#23513d;border-radius:11px;margin:0 0 17px;font-size:13px}.status.error{border-color:#ebbead;color:#9b3d2f;background:#fff0e8}
+.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:25px;box-shadow:0 5px 20px #1c45300b;margin-bottom:16px}.panel h2{font-size:20px;margin:0 0 5px}.desc{margin:0 0 23px;color:var(--muted)}.hidden{display:none!important}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.field{min-width:0}.field.full{grid-column:1/-1}label{display:block;font-weight:700;font-size:13px;margin:0 0 7px}.muted{font-size:13px;color:var(--muted)}.hint{font-size:12px;color:var(--muted);margin:4px 0 0}input,select,textarea{background:#fff;border:1px solid #b9cac2;border-radius:10px;width:100%;padding:11px 12px;min-height:45px;color:var(--ink)}textarea{resize:vertical}input:focus,select:focus{outline:2px solid #8ac5ae;outline-offset:1px}input[readonly]{background:#f5f8f5;color:#587469}select[size]{padding:6px 9px;min-height:140px;max-height:235px}select[size] option{padding:8px 5px;white-space:normal}.select-box{min-height:108px}
+.info{background:#eef5f1;padding:12px 14px;border-radius:11px;margin:10px 0;color:#315a49;font-size:13px}.info.warning{background:#fff6e9;color:var(--warn)}.info strong{font-size:14px}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}.primary,.secondary{border:0;padding:13px 19px;border-radius:11px;font-weight:700}.primary{background:var(--green);color:#fff}.secondary{background:#e5f2eb;color:var(--green)}button:disabled{opacity:.55;cursor:wait}.preview{width:100%;max-width:270px;max-height:190px;object-fit:contain;margin:8px 0;border-radius:11px;border:1px solid var(--line);background:#f3f4f3}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}.stat{padding:18px;background:white;border-radius:13px;border:1px solid var(--line)}.stat .val{font-size:25px;font-weight:800;color:var(--green)}.stat small{color:var(--muted)}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;min-width:700px}th,td{text-align:left;padding:13px 12px;border-bottom:1px solid #e7ece8;font-size:13px;vertical-align:top}th{background:#f4f7f5;font-weight:750;color:#476254}tr:last-child td{border-bottom:0}.bad{color:var(--bad);font-weight:700}.good{color:var(--green)}.link-btn{border:1px solid #c5dad0;background:white;color:var(--green);padding:6px 9px;border-radius:7px;font-weight:700;font-size:12px}.subline{display:block;color:var(--muted);font-size:11px;margin-top:3px}.checkboxrow{display:flex;align-items:center;gap:10px}.footer{font-size:12px;color:var(--muted);padding:9px 3px}.loader{display:inline-block;width:13px;height:13px;border-radius:100%;border:2px solid #cbded5;border-top-color:var(--green);animation:spin 1s linear infinite;vertical-align:middle;margin-right:6px}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:680px){.shell{padding:10px 10px 36px}.hero{padding:22px 17px;border-radius:15px}.hero h1{font-size:24px}.pill{display:none}.nav{display:grid;grid-template-columns:repeat(2,1fr)}.nav button{padding:11px 5px}.panel{padding:17px;border-radius:14px}.grid{grid-template-columns:1fr;gap:14px}.field.full{grid-column:1}.stats{grid-template-columns:repeat(3,1fr);gap:7px}.stat{padding:11px}.stat .val{font-size:20px}.stat small{font-size:11px}.actions>*{width:100%} }
+</style>
 </head>
-<body>
-<main>
-  <header><h1>♻️ Registro de residuos</h1><p>Mini demo · celular + nube</p></header>
-  <p class="status" id="estado" role="status">Conectando con Firebase...</p>
-  <section>
-    <h2>Nuevo registro</h2>
-    <form id="formulario">
-      <div class="grid">
-        <div><label for="fecha">Fecha de entrada</label><input id="fecha" type="date" required></div>
-        <div><label for="planta">Planta</label><select id="planta" required><option value="G1">G1</option><option value="G2">G2</option><option value="CF">CF</option></select></div>
-      </div>
-      <label for="residuo">Nombre del residuo</label>
-      <input id="residuo" placeholder="Ej. Aceite usado" maxlength="80" required>
-      <label for="kg">Volumen de entrada (kg)</label>
-      <input id="kg" type="number" min="0.01" max="10000" step="0.01" placeholder="Ej. 25.5" required>
-      <button id="guardar" type="submit" disabled>Guardar en la nube</button>
-    </form>
-    <button id="ejemplos" class="secondary" disabled>Agregar 3 registros de ejemplo</button>
-    <small>Los ejemplos solo se crean una vez. No uses información real o confidencial en esta demo.</small>
-  </section>
-  <section>
-    <div class="summary"><h2 style="margin:0">Registros en la nube</h2><strong id="total">0 kg</strong></div>
-    <div class="scroll"><table><thead><tr><th>Fecha</th><th>Planta</th><th>Residuo</th><th>Kg</th></tr></thead><tbody id="tabla"><tr><td colspan="4">Conectando...</td></tr></tbody></table></div>
-    <small id="conteo">0 registros</small>
-  </section>
+<body><main class="shell">
+<header class="hero"><div><h1>♻ Control de residuos</h1><p>Entradas, salidas y exportación a Bitácora / KPI</p></div><span class="pill">DEMO V2</span></header>
+<nav class="nav" aria-label="Secciones"><button class="active" data-page="inicio">Inicio</button><button data-page="entrada">+ Entrada</button><button data-page="salida">↗ Salida</button><button data-page="consulta">Registros y Excel</button></nav>
+<p class="status" id="status" role="status">Conectando con Firebase...</p>
+<section class="panel" data-screen="inicio"><h2>¿Qué deseas registrar?</h2><p class="desc">Selecciona el tipo de movimiento. La fecha y la hora se asignan automáticamente cuando guardas.</p>
+<div class="grid"><button class="primary" style="min-height:110px;font-size:18px" data-go="entrada">⬇ Registrar una entrada</button><button class="secondary" style="min-height:110px;font-size:18px" data-go="salida">⬆ Registrar una salida</button></div>
+<div class="info" id="inicialResumen">Cargando registros...</div></section>
+<section class="panel hidden" data-screen="entrada"><h2>Nueva entrada</h2><p class="desc">Captura la información del residuo y agrega una fotografía obligatoria.</p>
+<form id="formEntrada"><div class="grid">
+<div class="field"><label for="fEntrada">Fecha y hora (automática)</label><input id="fEntrada" readonly><p class="hint">La fecha oficial la marca Firebase al guardar.</p></div>
+<div class="field"><label for="ePlanta">¿En qué planta estás? *</label><select id="ePlanta" required><option value="">Seleccionar planta</option></select></div>
+<div class="field"><label for="eRazon">Razón social (automática)</label><input id="eRazon" readonly></div><div class="field"><label for="eUnidad">Planta / unidad (automática)</label><input id="eUnidad" readonly></div>
+<div class="field full"><label for="eBuscar">Buscar nombre del residuo *</label><input type="search" id="eBuscar" placeholder="Escribe una palabra: aceites, arena, recipientes..." autocomplete="off" aria-describedby="ayudaResiduos"><p class="hint" id="ayudaResiduos">Selecciona una descripción de la lista. No se permite texto libre.</p><select id="eResiduo" size="6" class="select-box" required aria-label="Residuos encontrados"></select></div>
+<div class="field full"><label>Categoría interna (automática)</label><div id="eCategoria" class="info">Selecciona un residuo para ver su clasificación.</div></div>
+<div class="field"><label for="eSocio">Número de socio *</label><input id="eSocio" type="text" maxlength="40" placeholder="Ej. 001257" required></div>
+<div class="field"><label for="eEnvases">Cantidad de envases o recipientes *</label><input id="eEnvases" type="number" min="1" max="1000000" step="1" required placeholder="Ej. 3"></div>
+<div class="field"><label for="ePresentacion">Presentación *</label><select id="ePresentacion" required><option value="">Seleccionar</option><option>Tote</option><option>Tambo</option><option>Tolva</option><option>Pza</option><option>Costal</option><option>Pipa</option></select></div>
+<div class="field"><label for="eKg">Volumen de entrada (kg) *</label><input id="eKg" type="number" min="0.01" max="100000" step="0.01" required placeholder="Ej. 125.5"></div>
+<div class="field full"><label for="eFoto">Fotografía de evidencia *</label><input id="eFoto" type="file" accept="image/*" capture="environment" required><p class="hint">Se comprime a JPEG y se guarda en Firestore para esta demo, no en Firebase Storage.</p><img id="ePreview" class="preview hidden" alt="Vista previa de la evidencia"></div>
+</div><div class="actions"><button type="submit" class="primary" id="btnEntrada" disabled>Guardar entrada y fotografía</button></div></form></section>
+<section class="panel hidden" data-screen="salida"><h2>Registrar salida</h2><p class="desc">Elige una entrada con kilos pendientes. La aplicación conservará cada salida por separado.</p>
+<form id="formSalida"><div class="grid">
+<div class="field"><label for="fSalida">Fecha y hora (automática)</label><input id="fSalida" readonly></div>
+<div class="field"><label for="sPlanta">Planta *</label><select id="sPlanta" required><option value="">Seleccionar planta</option></select></div>
+<div class="field full"><label for="sEntrada">¿Qué residuo está saliendo? *</label><select id="sEntrada" required><option value="">Selecciona primero una planta</option></select><div id="sPendiente" class="info">Selecciona una entrada con volumen pendiente.</div></div>
+<div class="field"><label for="sKg">Volumen de salida (kg) *</label><input id="sKg" type="number" min="0.01" max="100000" step="0.01" required></div>
+<div class="field"><label for="sManifiesto">Número de manifiesto *</label><input id="sManifiesto" type="text" maxlength="80" required></div>
+<div class="field"><label for="sTransportista">Transportista *</label><select id="sTransportista" required><option value="">Seleccionar</option><option>Transportista DEMO A</option><option>Transportista DEMO B</option><option>Otro (pendiente de catálogo)</option></select><p class="hint">Opciones ficticias. Sustituir por catálogo autorizado antes de uso real.</p></div>
+<div class="field"><label for="sCrit">Característica de peligrosidad (CRIT) *</label><select id="sCrit" required><option value="">Seleccionar</option><option value="C">C — Corrosivo</option><option value="R">R — Reactivo</option><option value="I">I — Inflamable</option><option value="T">T — Tóxico</option><option value="CR">CR</option><option value="CI">CI</option><option value="CT">CT</option><option value="RI">RI</option><option value="RT">RT</option><option value="IT">IT</option><option value="CRI">CRI</option><option value="CRT">CRT</option><option value="CIT">CIT</option><option value="RIT">RIT</option><option value="CRIT">CRIT</option></select></div>
+<div class="field"><label for="sTicket">Número de ticket de báscula *</label><input id="sTicket" maxlength="80" required></div>
+<div class="field full"><label for="sFoto">Fotografía de evidencia *</label><input id="sFoto" type="file" accept="image/*" capture="environment" required><img id="sPreview" class="preview hidden" alt="Vista previa de la salida"></div>
+</div><div class="actions"><button type="submit" id="btnSalida" class="primary" disabled>Guardar salida y fotografía</button></div></form></section>
+<section class="panel hidden" data-screen="consulta"><h2>Consulta y Excel</h2><p class="desc">Los datos se leen de Firebase. Los dos libros se generan aquí y se descargan al dispositivo.</p>
+<div class="stats"><div class="stat"><div class="val" id="nEntradas">0</div><small>Entradas</small></div><div class="stat"><div class="val" id="nSalidas">0</div><small>Salidas</small></div><div class="stat"><div class="val" id="nKg">0</div><small>Kg pendientes</small></div></div>
+<div class="actions"><button class="primary" id="expBitacora" disabled>⬇ Descargar Bitácora.xlsx</button><button class="secondary" id="expKpi" disabled>⬇ Descargar KPI.xlsx</button></div>
+<div class="info warning">Los libros Excel se descargan; no se actualizan automáticamente dentro de OneDrive o Google Drive. El formato Bitácora contiene 21 columnas principales y una hoja adicional para las salidas parciales.</div>
+<h3>Entradas registradas</h3><div class="table-wrap"><table><thead><tr><th>Fecha / planta</th><th>Residuo</th><th>Entrada</th><th>Salida</th><th>Pendiente</th><th>Fotografía</th></tr></thead><tbody id="tablaEntradas"><tr><td colspan="6">Sin registros todavía.</td></tr></tbody></table></div>
+<h3>Historial de salidas</h3><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Residuo / planta</th><th>Kg</th><th>Manifiesto</th><th>Fotografía</th></tr></thead><tbody id="tablaSalidas"><tr><td colspan="5">Sin salidas.</td></tr></tbody></table></div>
+</section>
+<p class="footer">DEMO pública y no apta para datos empresariales reales. Usa únicamente registros y fotografías ficticios. La clasificación de residuos pendiente requiere aprobación del responsable.</p>
 </main>
+<dialog id="fotoModal" style="border:0;border-radius:14px;max-width:94vw;max-height:94vh;padding:12px;background:#f9faf9"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><strong>Evidencia fotográfica</strong><button id="cerrarFoto" class="secondary" type="button">Cerrar</button></div><img id="fotoGrande" alt="Fotografía de evidencia" style="max-width:88vw;max-height:77vh;object-fit:contain"></dialog>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script type="module">
-  import {initializeApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
-  import {getAuth, signInAnonymously} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
-  import {getFirestore, collection, addDoc, doc, getDoc, setDoc, onSnapshot, serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
+import {getAuth,signInAnonymously} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
+import {getFirestore,collection,doc,getDoc,onSnapshot,serverTimestamp,writeBatch} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 
-  // EDITA SOLO ESTOS VALORES: Firebase Console > Project settings > Your apps > Web.
-  const firebaseConfig = {
-    apiKey: 'AIzaSyBYOTFNfZ2DC5tYncRXtozuX5ZU3TM6EOo',
-    authDomain: 'fir-residuos.firebaseapp.com',
-    projectId: 'fir-residuos',
-    appId: '1:612249509959:web:6394e75a7521484f671162'
-  };
+// COPIA ESTOS CUATRO VALORES DEL index.html ACTUAL (V1) O DE FIREBASE > CONFIGURACIÓN DEL PROYECTO > TUS APLICACIONES.
+const firebaseConfig = {
+  apiKey:'AIzaSyBYOTFNfZ2DC5tYncRXtozuX5ZU3TM6EOo',
+  authDomain:'fir-residuos.firebaseapp.com',
+  projectId:'fir-residuos
+  appId:'1:612249509959:web:6394e75a7521484f671162'
+};
 
-  const $ = id => document.getElementById(id);
-  const status = (mensaje, error=false) => { $('estado').textContent = mensaje; $('estado').className = error ? 'status error' : 'status'; };
-  const hoy = (offset=0) => {
-    const d = new Date(); d.setDate(d.getDate()-offset);
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  };
-  $('fecha').value = hoy();
-  const numero = n => new Intl.NumberFormat('es-MX',{maximumFractionDigits:2}).format(n);
+const CATALOGO = [{"id":"R01","nombre":"Trapos, guantes textiles, ropa, zapatos y mascarillas textiles impregnados con aceites, grasas, solventes orgánicos (alcohol etílico, alcohol isopropílico y thinner), pintura","categoria":"Industrial & Commercial Wastes NOC*","pendiente":false},{"id":"R02","nombre":"Sólidos (recipientes plásticos y metalicos, madera, cartón, papel, esponjas, bandas, etc) contaminadas con grasas, aceites, refirgerantes o pintura","categoria":"","pendiente":true},{"id":"R03","nombre":"Recipientes metálicos de varias capacidades que contuvieron aceites, refrigerantes, solventes orgánicos (alcohol etílico, alcohol isopopílico y thinner) o pintura","categoria":"Industrial & Commercial Wastes NOC*","pendiente":false},{"id":"R04","nombre":"Recipientes plásticos de varias capacidades que contuvieron aceites, refrigerantes, solventes orgánicos (alcohol etílico, alcohol isopropílico y thinner)","categoria":"Industrial & Commercial Wastes NOC*","pendiente":false},{"id":"R05","nombre":"Latas de pintura en aerosol","categoria":"","pendiente":true},{"id":"R06","nombre":"Arena contaminada con aceite, ácido, sosa","categoria":"Sand Related","pendiente":false},{"id":"R07","nombre":"Agua contaminada (aceite, arena, glicol, resina, hidrocarburos)","categoria":"","pendiente":true},{"id":"R08","nombre":"Agua con líquido penetrante (2-propylheptanol exthoxylated) proveniente de pruebas en producto","categoria":"","pendiente":true},{"id":"R09","nombre":"Químicos caducos (grasas, aceites, lubricantes, pegamentos)","categoria":"Chemicals","pendiente":false},{"id":"R10","nombre":"Mangueras contaminadas con grasas, aceites o solubles","categoria":"Industrial & Commercial Wastes NOC*","pendiente":false},{"id":"R11","nombre":"Mezcla de detergente con aceite soluble contaminado","categoria":"Chemicals","pendiente":false},{"id":"R12","nombre":"Sosa con agua del proceso de lavado herramental","categoria":"Chemicals","pendiente":false},{"id":"R13","nombre":"Resina caduca y agotada","categoria":"Industrial & Commercial Wastes NOC*","pendiente":false},{"id":"R14","nombre":"Agua contaminada con gasolina, diésel, grasas, aceites diélectricos, aceites lubricantes, solventes orgánicos (alcohol etílico, alcohol isopropílico y thinner)","categoria":"Water/aqueous solution or liquid","pendiente":false},{"id":"R15","nombre":"Recipientes metálicos de varias capacidades que contuvieron aceites,refrigerantes, solventes orgánicos o pintura","categoria":"","pendiente":true},{"id":"R16","nombre":"Filtros usados de aceite","categoria":"","pendiente":true},{"id":"R17","nombre":"Natas de pintura en esmalte, pintura y sellador caducos","categoria":"Chemicals","pendiente":false},{"id":"R18","nombre":"Lodos contaminados con sosa","categoria":"","pendiente":true},{"id":"R19","nombre":"Residuo solido peligroso generado de la limpieza del area de incendio","categoria":"","pendiente":true},{"id":"R20","nombre":"Recipientes metálicos de varias capacidades que contuvieron aceites, refrigerantes, solventes orgánicos o pintura","categoria":"","pendiente":true},{"id":"R21","nombre":"Recipientes plásticos de varias capacidades que contuvieron aceites, refrigerantes, solventes orgánicos, pintura, grasa","categoria":"","pendiente":true},{"id":"R22","nombre":"Sosa con agua","categoria":"","pendiente":true},{"id":"R23","nombre":"Pilas alcalinas","categoria":"Industrial & Commercial Wastes NOC*","pendiente":false},{"id":"R24","nombre":"Recipientes plásticos de varias capacidades que contuvieron aceites, refrigerantes, solventes orgánicos,pintura, grasa","categoria":"","pendiente":true},{"id":"R25","nombre":"Grasa (contaminada con aceite, tierra)","categoria":"Industrial & Commercial Wastes NOC*","pendiente":false},{"id":"R26","nombre":"Lámparas fluorescentes y de vapor de mercurio","categoria":"","pendiente":true},{"id":"R27","nombre":"Mezcla de detergente con aceite soluble gastado","categoria":"","pendiente":true},{"id":"R28","nombre":"Natas de pintura con esmalte, pintura y sellador caducos","categoria":"","pendiente":true},{"id":"R29","nombre":"Mangueras contaminadas con grasas,aceites o solubles","categoria":"","pendiente":true},{"id":"R30","nombre":"Absorber (material absorbente tipo aserrín/arena) contaminado con aceites y grasas, con restos de rebabas de aluminio","categoria":"Industrial & Commercial Wastes NOC*","pendiente":false},{"id":"R31","nombre":"Aceites gastados hidráulicos","categoria":"Oils/Lubricants/Emulsions","pendiente":false},{"id":"R32","nombre":"Aceites gastados solubles","categoria":"","pendiente":true},{"id":"R33","nombre":"Aceites hidráulicos con agua","categoria":"Oils/Lubricants/Emulsions","pendiente":false},{"id":"R34","nombre":"Acumuladores de vehículos automotores conteniendo plomo","categoria":"Industrial & Commercial Wastes NOC*","pendiente":false}];
+const PLANTAS = [{"codigo":"CDT","razon":"Plantas García 1"},{"codigo":"1Y2","razon":"Plantas García 1"},{"codigo":"3Y4","razon":"Plantas García 1"},{"codigo":"5Y6","razon":"Plantas García 1"},{"codigo":"Maquinados","razon":"Plantas García 2"},{"codigo":"HPDC","razon":"Plantas García 2"},{"codigo":"EMC","razon":"Plantas García 2"},{"codigo":"TC","razon":"Plantas García 2"},{"codigo":"CD","razon":"Centro Fusor"}];
+const $=id=>document.getElementById(id);
+let db=null, auth=null, listo=false, entradas=[],salidas=[];
+const fmtKg=n=>new Intl.NumberFormat('es-MX',{maximumFractionDigits:2}).format(n||0);
+const limpio=v=>String(v??'').trim();
+const hoyTexto=()=>new Intl.DateTimeFormat('es-MX',{timeZone:'America/Monterrey',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date());
+const tsToDate=x=>x&&typeof x.toDate==='function'?x.toDate():null;
+const dateMX=d=>d?new Intl.DateTimeFormat('es-MX',{timeZone:'America/Monterrey',day:'2-digit',month:'2-digit',year:'numeric'}).format(d):'';
+const dateKey=d=>{if(!d)return '';const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Monterrey',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d);const get=t=>parts.find(p=>p.type===t)?.value||'';return get('year')+'-'+get('month')+'-'+get('day');};
+const yearMX=d=>d?Number(new Intl.DateTimeFormat('en-US',{timeZone:'America/Monterrey',year:'numeric'}).format(d)):'';
+const monthMX=d=>d?new Intl.DateTimeFormat('en-US',{timeZone:'America/Monterrey',month:'long'}).format(d):'';
+const monthYear=d=>d?monthMX(d)+' '+yearMX(d):'';
+const dateExcel=d=>{ if(!d)return '';const z=dateKey(d).split('-');return new Date(Number(z[0]),Number(z[1])-1,Number(z[2]),12,0,0); };
+function estado(t,error=false){$('status').textContent=t;$('status').classList.toggle('error',error);}
+function page(id){document.querySelectorAll('[data-screen]').forEach(n=>n.classList.toggle('hidden',n.dataset.screen!==id));document.querySelectorAll('[data-page]').forEach(n=>n.classList.toggle('active',n.dataset.page===id)); window.scrollTo({top:0,behavior:'smooth'});}
+for(const b of document.querySelectorAll('[data-page]'))b.addEventListener('click',()=>page(b.dataset.page));
+for(const b of document.querySelectorAll('[data-go]'))b.addEventListener('click',()=>page(b.dataset.go));
+setInterval(()=>{$('fEntrada').value=hoyTexto();$('fSalida').value=hoyTexto();},30000);
+$('fEntrada').value=hoyTexto();$('fSalida').value=hoyTexto();
+const pByCode=Object.fromEntries(PLANTAS.map(p=>[p.codigo,p]));
+for(const id of ['ePlanta','sPlanta']) for(const p of PLANTAS){let o=document.createElement('option');o.value=p.codigo;o.textContent=p.codigo+' — '+p.razon;$(id).append(o);}
+$('ePlanta').addEventListener('change',()=>{const p=pByCode[$('ePlanta').value];$('eRazon').value=p?.razon||'';$('eUnidad').value=p?.codigo||'';});
+function filtrados(){const q=limpio($('eBuscar').value).toLocaleLowerCase('es-MX');const current=$('eResiduo').value;const opciones=CATALOGO.filter(c=>c.nombre.toLocaleLowerCase('es-MX').includes(q));$('eResiduo').replaceChildren();for(const r of opciones){let o=document.createElement('option');o.value=r.id;o.textContent=r.nombre;$('eResiduo').append(o);}if(opciones.some(r=>r.id===current))$('eResiduo').value=current;else $('eResiduo').selectedIndex=-1;actualizaCategoria();}
+function actualizaCategoria(){const c=CATALOGO.find(x=>x.id===$('eResiduo').value);$('eCategoria').textContent=!c?'Selecciona un residuo de la lista.':c.categoria?'Categoría interna: '+c.categoria:'Categoría no aprobada todavía (queda en blanco en el KPI).';$('eCategoria').classList.toggle('warning',Boolean(c&&!c.categoria));}
+$('eBuscar').addEventListener('input',filtrados);$('eResiduo').addEventListener('change',actualizaCategoria);filtrados();
+function previsualiza(id,img){$(id).addEventListener('change',()=>{const f=$(id).files[0];const im=$(img);if(!f){im.classList.add('hidden');im.removeAttribute('src');return;}const old=im.dataset.url;if(old)URL.revokeObjectURL(old);const u=URL.createObjectURL(f);im.src=u;im.dataset.url=u;im.classList.remove('hidden');});}
+previsualiza('eFoto','ePreview');previsualiza('sFoto','sPreview');$('cerrarFoto').addEventListener('click',()=>$('fotoModal').close());
+function convertirFoto(file){return new Promise((resolve,reject)=>{if(!file||!file.type.startsWith('image/')){reject(new Error('Selecciona una fotografía válida.'));return;}if(file.size>15*1024*1024){reject(new Error('La imagen original supera 15 MB.'));return;}
+const url=URL.createObjectURL(file),img=new Image();img.onload=()=>{URL.revokeObjectURL(url);try{let size=850,quality=.7,out='';for(let i=0;i<5;i++){let scale=Math.min(1,size/Math.max(img.naturalWidth,img.naturalHeight));const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);out=canvas.toDataURL('image/jpeg',quality);if(out.length<205000){resolve(out);return;}size=Math.round(size*.74);quality-=.07;}reject(new Error('No se pudo comprimir la fotografía bajo el límite de esta demo.'));}catch(e){reject(e);}};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('No se pudo abrir la imagen.'));};img.src=url;});}
+function resta(e){const total=salidas.filter(s=>s.entradaId===e.id).reduce((sum,s)=>sum+Number(s.kg||0),0);return Math.round((Number(e.kg)-total)*100)/100;}
+function mostRecent(lista){return [...lista].sort((a,b)=>(tsToDate(b.creadoEn)?.getTime()||0)-(tsToDate(a.creadoEn)?.getTime()||0))[0];}
+function updateSalidaOptions(){const plant=$('sPlanta').value,sel=$('sEntrada'),old=sel.value;sel.replaceChildren();const first=document.createElement('option');first.value='';first.textContent=plant?'Seleccionar entrada pendiente':'Selecciona primero una planta';sel.append(first);for(const e of entradas.filter(x=>x.planta===plant&&resta(x)>0)){const op=document.createElement('option');op.value=e.id;op.textContent=e.nombreResiduo.slice(0,65)+' | '+fmtKg(resta(e))+' kg | '+dateMX(tsToDate(e.creadoEn));sel.append(op);}if([...sel.options].some(o=>o.value===old))sel.value=old;actualizaPendiente();}
+function actualizaPendiente(){const e=entradas.find(x=>x.id===$('sEntrada').value);$('sPendiente').textContent=e?`Disponible: ${fmtKg(resta(e))} kg · ${e.planta} · ${e.nombreResiduo}`:'Selecciona una entrada pendiente.';$('sKg').max=e?Math.max(0,resta(e)):100000;}
+$('sPlanta').addEventListener('change',updateSalidaOptions);$('sEntrada').addEventListener('change',actualizaPendiente);
+function render(){const pend=entradas.reduce((s,e)=>s+Math.max(0,resta(e)),0);$('nEntradas').textContent=entradas.length;$('nSalidas').textContent=salidas.length;$('nKg').textContent=fmtKg(pend);$('inicialResumen').textContent=`${entradas.length} entradas · ${salidas.length} salidas · ${fmtKg(pend)} kg pendientes`;
+const tbody=$('tablaEntradas');tbody.replaceChildren();for(const e of [...entradas].sort((a,b)=>(tsToDate(b.creadoEn)?.getTime()||0)-(tsToDate(a.creadoEn)?.getTime()||0))){const tr=document.createElement('tr');const items=[dateMX(tsToDate(e.creadoEn))+' · '+e.planta,e.nombreResiduo,fmtKg(e.kg)+' kg',fmtKg(e.kg-resta(e))+' kg',fmtKg(resta(e))+' kg'];for(let i=0;i<items.length;i++){let td=document.createElement('td');td.textContent=items[i];tr.append(td);}const photo=document.createElement('td'),btn=document.createElement('button');btn.textContent='Ver foto';btn.className='link-btn';btn.addEventListener('click',()=>verFoto(e.evidenciaId));photo.append(btn);tr.append(photo);tbody.append(tr);}if(!entradas.length)emptyRow(tbody,6,'Todavía no hay entradas V2.');
+const t2=$('tablaSalidas');t2.replaceChildren();for(const s of [...salidas].sort((a,b)=>(tsToDate(b.creadoEn)?.getTime()||0)-(tsToDate(a.creadoEn)?.getTime()||0))){const tr=document.createElement('tr');for(const v of [dateMX(tsToDate(s.creadoEn)),s.nombreResiduo+' · '+s.planta,fmtKg(s.kg)+' kg',s.manifiesto]){let td=document.createElement('td');td.textContent=v;tr.append(td);}let td=document.createElement('td'),btn=document.createElement('button');btn.textContent='Ver foto';btn.className='link-btn';btn.addEventListener('click',()=>verFoto(s.evidenciaId));td.append(btn);tr.append(td);t2.append(tr);}if(!salidas.length)emptyRow(t2,5,'Todavía no hay salidas V2.');updateSalidaOptions();}
+function emptyRow(tbody,cols,text){let tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=cols;td.textContent=text;tr.append(td);tbody.append(tr);}
+async function verFoto(id){if(!db||!id)return;try{const snap=await getDoc(doc(db,'residuos_v2_evidencias',id));if(!snap.exists()){alert('No se encontró la evidencia.');return;}const url=snap.data().foto;if(!url||!url.startsWith('data:image/jpeg;base64,'))throw new Error('Formato inesperado');$('fotoGrande').src=url;$('fotoModal').showModal();}catch(err){alert('Error de evidencia: '+err.message);}}
+async function guardarConFoto(tipo,registro,archivo){const src=await convertirFoto(archivo);const isEntry=tipo==='entrada';const col=isEntry?'residuos_v2_entradas':'residuos_v2_salidas';const ref=doc(collection(db,col));const fotoId=(isEntry?'E_':'S_')+ref.id;const batch=writeBatch(db);batch.set(ref,{...registro,evidenciaId:fotoId,creadoEn:serverTimestamp()});batch.set(doc(db,'residuos_v2_evidencias',fotoId),{movimientoId:ref.id,tipo,foto:src,creadoEn:serverTimestamp()});await batch.commit();return ref.id;}
+$('formEntrada').addEventListener('submit',async ev=>{ev.preventDefault();if(!listo)return;const btn=$('btnEntrada');btn.disabled=true;estado('Comprimiendo y guardando fotografía...');try{const p=pByCode[$('ePlanta').value],c=CATALOGO.find(x=>x.id===$('eResiduo').value);const kg=Number($('eKg').value),envases=Number($('eEnvases').value);if(!p||!c||!limpio($('eSocio').value)||!Number.isInteger(envases)||envases<1||!Number.isFinite(kg)||kg<=0||kg>100000)throw new Error('Completa los datos de entrada y selecciona un residuo válido.');if(!['Tote','Tambo','Tolva','Pza','Costal','Pipa'].includes($('ePresentacion').value))throw new Error('Presentación inválida');const e={planta:p.codigo,razonSocial:p.razon,plantaEspecifica:p.codigo,residuoId:c.id,nombreResiduo:c.nombre,categoriaInterna:c.categoria,socio:limpio($('eSocio').value),envases,presentacion:$('ePresentacion').value,kg,ubicacion:'MTY'};await guardarConFoto('entrada',e,$('eFoto').files[0]);$('formEntrada').reset();$('ePreview').classList.add('hidden');$('eBuscar').value='';filtrados();$('eCategoria').textContent='Selecciona un residuo de la lista.';estado('✅ Entrada y fotografía guardadas en Firebase.');page('consulta');}catch(ex){estado('No se guardó la entrada: '+ex.message,true);}finally{btn.disabled=!listo;}});
+$('formSalida').addEventListener('submit',async ev=>{ev.preventDefault();if(!listo)return;const btn=$('btnSalida');btn.disabled=true;estado('Guardando salida y evidencia...');try{const e=entradas.find(x=>x.id===$('sEntrada').value);const kg=Number($('sKg').value),disp=e?resta(e):0;if(!e||e.planta!==$('sPlanta').value||!Number.isFinite(kg)||kg<=0||kg>disp+0.00001)throw new Error('Selecciona un registro y un volumen que no supere los kg disponibles.');const manifiesto=limpio($('sManifiesto').value),transportista=$('sTransportista').value,crit=$('sCrit').value,ticket=limpio($('sTicket').value);if(!manifiesto||!transportista||!crit||!ticket)throw new Error('Faltan datos de la salida.');await guardarConFoto('salida',{entradaId:e.id,planta:e.planta,nombreResiduo:e.nombreResiduo,kg,manifiesto,transportista,crit,ticket},$('sFoto').files[0]);$('formSalida').reset();$('sPreview').classList.add('hidden');actualizaPendiente();estado('✅ Salida y fotografía guardadas en Firebase.');page('consulta');}catch(ex){estado('No se guardó la salida: '+ex.message,true);}finally{btn.disabled=!listo;}});
 
-  if (Object.values(firebaseConfig).some(v => v.startsWith('PON_AQUI'))) {
-    status('Falta pegar la configuración de Firebase en index.html.',true);
-  } else {
-    try {
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-      const db = getFirestore(app);
-      const registros = collection(db,'residuos_demo');
-      await signInAnonymously(auth);
-      $('guardar').disabled = false;
-      $('ejemplos').disabled = false;
-      status('Conectado: lo que guardes aparecerá en otros dispositivos.');
-
-      onSnapshot(registros, snapshot => {
-        const datos = snapshot.docs.map(d => ({id:d.id,...d.data()}));
-        datos.sort((a,b) => b.fecha.localeCompare(a.fecha));
-        const tabla = $('tabla'); tabla.replaceChildren();
-        if (!datos.length) {
-          const tr=document.createElement('tr'); const td=document.createElement('td');
-          td.colSpan=4; td.textContent='Todavía no hay registros.'; tr.appendChild(td); tabla.appendChild(tr);
-        }
-        for (const r of datos.slice(0,50)) {
-          const tr=document.createElement('tr');
-          for (const dato of [r.fecha,r.planta,r.residuo,numero(r.kg)]) {
-            const td=document.createElement('td');td.textContent=dato;tr.appendChild(td);
-          }
-          tabla.appendChild(tr);
-        }
-        $('total').textContent = `${numero(datos.reduce((s,r)=>s+r.kg,0))} kg`;
-        $('conteo').textContent = `${datos.length} registros · mostrando hasta 50`;
-      }, e => status(`Error al leer datos: ${e.message}`,true));
-
-      $('formulario').addEventListener('submit',async e => {
-        e.preventDefault();$('guardar').disabled=true;
-        try {
-          const residuo=$('residuo').value.trim(); const kg=Number($('kg').value);
-          if (!residuo || kg<=0 || kg>10000) throw new Error('Revisa el residuo y los kg.');
-          await addDoc(registros, {fecha:$('fecha').value,planta:$('planta').value,residuo,kg,creadoEn:serverTimestamp()});
-          $('residuo').value='';$('kg').value='';status('✅ Registro guardado en Firebase.');
-        } catch(err) {status(`No se guardó: ${err.message}`,true);}
-        finally {$('guardar').disabled=false;}
-      });
-
-      $('ejemplos').addEventListener('click',async () => {
-        $('ejemplos').disabled=true;
-        const muestras=[
-          {fecha:hoy(2),planta:'G1',residuo:'Aceite usado',kg:40},
-          {fecha:hoy(1),planta:'G2',residuo:'Trapos contaminados',kg:12.5},
-          {fecha:hoy(),planta:'CF',residuo:'Arena usada',kg:80}
-        ];
-        try {
-          for(let i=0;i<muestras.length;i++) {
-            const ref=doc(db,'residuos_demo',`ejemplo_0${i+1}`);
-            if (!(await getDoc(ref)).exists()) await setDoc(ref,{...muestras[i],creadoEn:serverTimestamp()});
-          }
-          status('✅ Datos de ejemplo cargados (sin duplicarlos).');
-        } catch(err) {status(`No se pudieron cargar los ejemplos: ${err.message}`,true);}
-        finally {$('ejemplos').disabled=false;}
-      });
-    } catch(e) {status(`No se pudo conectar: ${e.message}`,true);}
-  }
+const HEAD_BIT=['FECHA DE ENTRADA M/D/A','MES DE ENTRADA','AÑO DE ENTRADA','NOMBRE DEL RESIDUO','AREA DE PROCEDENCIA','UNIDAD DE NEGOCIO','PLANTA','# DE SOCIO','CANTIDAD DE ENVASES O RECIPIENTES','PRESENTACION (Tote/Tambo/Tolva/Pza/Costal/Pipa)','VOLUMEN ENTRADA (KG)','SALIDA BASCULA (KG)','CARACTERÍSTICA DE PELIGROSIDAD (CRIT)','FECHA SALIDA M/D/A','MES DE SALIDA','AÑO DE SALIDA','TRANSPORTISTA','# DE MANIFIESTO','# TICKET DE BASCULA (KG)','CARACTERÍSTICA DE PELIGROSIDAD (CRIT)','Observaciones'];
+const HEAD_KPI=['Ubicación','Fecha de Entrada','Mes de Entrada','Año de Entrada','Mes - Año de entrada','Categoria Interna','Nombre del Residuo','Razón social','Planta','Planta específica','Volumen de entrada kg','Volumen de salida kg','Fecha de Salida','Mes de Salida','Año de Salida','Mes - Año de Salida'];
+function details(entry){const ss=salidas.filter(x=>x.entradaId===entry.id),ult=mostRecent(ss),kgOut=Math.round(ss.reduce((s,x)=>s+Number(x.kg||0),0)*100)/100;return {ss,ult,kgOut};}
+function rowsBit(){return entradas.map(e=>{const f=tsToDate(e.creadoEn),{ss,ult,kgOut}=details(e),outDate=tsToDate(ult?.creadoEn);return [dateExcel(f),monthMX(f),yearMX(f),e.nombreResiduo,'',e.planta,e.plantaEspecifica,e.socio,e.envases,e.presentacion,e.kg,ss.length?kgOut:'','',dateExcel(outDate),monthMX(outDate),yearMX(outDate),ult?.transportista||'',ss.map(s=>s.manifiesto).join(' | '),ult?.ticket||'',ult?.crit||'',ss.length>1?`${ss.length} salidas parciales; revisar hoja Salidas_detalle`:'' ];});}
+function rowsKPI(){return entradas.map(e=>{const f=tsToDate(e.creadoEn),{ss,ult,kgOut}=details(e),out=tsToDate(ult?.creadoEn);return ['MTY',dateExcel(f),monthMX(f),yearMX(f),monthYear(f),e.categoriaInterna||'',e.nombreResiduo,e.razonSocial,e.planta,e.plantaEspecifica,e.kg,ss.length?kgOut:'',dateExcel(out),monthMX(out),yearMX(out),monthYear(out)];});}
+function rowsSalidas(){return salidas.map(s=>{const entrada=entradas.find(e=>e.id===s.entradaId);return [s.entradaId,entrada?.planta||s.planta,entrada?.nombreResiduo||s.nombreResiduo,dateExcel(tsToDate(s.creadoEn)),s.kg,s.manifiesto,s.transportista,s.crit,s.ticket,s.evidenciaId];});}
+function sheet(headers,rows){const ws=window.XLSX.utils.aoa_to_sheet([headers,...rows],{cellDates:true,dateNF:'mm/dd/yyyy'});ws['!cols']=headers.map(h=>({wch:Math.min(45,Math.max(15,h.length+3))}));ws['!freeze']={xSplit:0,ySplit:1};const dates=headers.map((s,i)=>/^FECHA|^Fecha/.test(s)?i:-1).filter(i=>i>=0);for(let r=1;r<=rows.length;r++)for(const i of dates){const cell=window.XLSX.utils.encode_cell({r,c:i});if(ws[cell]?.t==='d')ws[cell].z='mm/dd/yyyy';}return ws;}
+function exportar(tipo){if(!listo){estado('Firebase todavía no está listo.',true);return;}if(!window.XLSX){estado('No se pudo cargar la librería Excel. Comprueba internet y recarga la página.',true);return;}try{const book=window.XLSX.utils.book_new();if(tipo==='bit'){window.XLSX.utils.book_append_sheet(book,sheet(HEAD_BIT,rowsBit()),'Bitacora');window.XLSX.utils.book_append_sheet(book,sheet(['ID entrada','Planta','Residuo','Fecha salida','Kg salida','Manifiesto','Transportista','CRIT','Ticket báscula','ID evidencia'],rowsSalidas()),'Salidas_detalle');}else{window.XLSX.utils.book_append_sheet(book,sheet(HEAD_KPI,rowsKPI()),'KPI');}const name=(tipo==='bit'?'Bitacora':'KPI')+'_Residuos_'+dateKey(new Date())+'.xlsx';window.XLSX.writeFile(book,name);estado('✅ Archivo Excel generado: '+name);}catch(ex){estado('Error al generar Excel: '+ex.message,true);}}
+$('expBitacora').addEventListener('click',()=>exportar('bit'));$('expKpi').addEventListener('click',()=>exportar('kpi'));
+if(Object.values(firebaseConfig).some(v=>!v||v.includes('PON_AQUI'))){estado('⚠️ Falta copiar los 4 valores firebaseConfig desde tu versión anterior de index.html.',true);}else{try{const app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);await signInAnonymously(auth);listo=true;$('btnEntrada').disabled=false;$('btnSalida').disabled=false;$('expBitacora').disabled=false;$('expKpi').disabled=false;estado('Conectado a Firebase. Puedes registrar entradas y salidas.');
+onSnapshot(collection(db,'residuos_v2_entradas'),snap=>{entradas=snap.docs.map(d=>({id:d.id,...d.data()}));render();},err=>estado('Error leyendo entradas: '+err.message,true));
+onSnapshot(collection(db,'residuos_v2_salidas'),snap=>{salidas=snap.docs.map(d=>({id:d.id,...d.data()}));render();},err=>estado('Error leyendo salidas: '+err.message,true));
+}catch(ex){estado('No se pudo conectar: '+ex.message,true);}}
 </script>
-</body>
-</html>
+</body></html>
+

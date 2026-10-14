@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#145a4b">
+  <title>Residuos | Mini demo</title>
+  <style>
+    *{box-sizing:border-box}
+    body{font:16px system-ui,-apple-system,Segoe UI,sans-serif;background:#f1f5f3;margin:0;color:#162a24}
+    main{max-width:780px;margin:0 auto;padding:24px 16px 42px}
+    header{background:#145a4b;color:white;padding:22px;border-radius:18px}
+    h1{font-size:1.65rem;margin:0 0 6px}header p{margin:0;color:#d6ede5}
+    section{background:white;border:1px solid #dbe4df;padding:20px;margin-top:16px;border-radius:16px;box-shadow:0 3px 8px #00000005}
+    h2{font-size:1.08rem;margin:0 0 16px}
+    label{display:block;font-size:.92rem;font-weight:650;margin:0 0 6px}
+    input,select,button{font:inherit;width:100%;border-radius:10px;padding:12px}
+    input,select{border:1px solid #bccac2;background:white;margin-bottom:15px}
+    input:focus,select:focus{outline:2px solid #72c3a9;outline-offset:1px}
+    button{border:0;background:#145a4b;color:white;font-weight:700;cursor:pointer}
+    button:disabled{opacity:.5;cursor:wait}
+    button.secondary{background:#e5f2ec;color:#145a4b;margin-top:10px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+    .status{padding:10px 12px;border-radius:9px;background:#e5f2ec;margin:14px 0 0;font-size:.88rem}
+    .status.error{background:#fff0e8;color:#9a3219}
+    .summary{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:14px}
+    .summary strong{font-size:1.1rem}
+    .scroll{overflow:auto}table{border-collapse:collapse;width:100%;min-width:460px}
+    th,td{text-align:left;border-bottom:1px solid #e3e9e5;padding:11px 8px;font-size:.9rem}
+    th{font-size:.8rem;color:#607067}td:last-child,th:last-child{text-align:right}
+    small{color:#64746a;display:block;margin-top:13px}
+    @media(max-width:450px){.grid{grid-template-columns:1fr}main{padding:14px 11px 30px}section{padding:16px}}
+  </style>
+</head>
+<body>
+<main>
+  <header><h1>♻️ Registro de residuos</h1><p>Mini demo · celular + nube</p></header>
+  <p class="status" id="estado" role="status">Conectando con Firebase...</p>
+  <section>
+    <h2>Nuevo registro</h2>
+    <form id="formulario">
+      <div class="grid">
+        <div><label for="fecha">Fecha de entrada</label><input id="fecha" type="date" required></div>
+        <div><label for="planta">Planta</label><select id="planta" required><option value="G1">G1</option><option value="G2">G2</option><option value="CF">CF</option></select></div>
+      </div>
+      <label for="residuo">Nombre del residuo</label>
+      <input id="residuo" placeholder="Ej. Aceite usado" maxlength="80" required>
+      <label for="kg">Volumen de entrada (kg)</label>
+      <input id="kg" type="number" min="0.01" max="10000" step="0.01" placeholder="Ej. 25.5" required>
+      <button id="guardar" type="submit" disabled>Guardar en la nube</button>
+    </form>
+    <button id="ejemplos" class="secondary" disabled>Agregar 3 registros de ejemplo</button>
+    <small>Los ejemplos solo se crean una vez. No uses información real o confidencial en esta demo.</small>
+  </section>
+  <section>
+    <div class="summary"><h2 style="margin:0">Registros en la nube</h2><strong id="total">0 kg</strong></div>
+    <div class="scroll"><table><thead><tr><th>Fecha</th><th>Planta</th><th>Residuo</th><th>Kg</th></tr></thead><tbody id="tabla"><tr><td colspan="4">Conectando...</td></tr></tbody></table></div>
+    <small id="conteo">0 registros</small>
+  </section>
+</main>
+<script type="module">
+  import {initializeApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
+  import {getAuth, signInAnonymously} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
+  import {getFirestore, collection, addDoc, doc, getDoc, setDoc, onSnapshot, serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+
+  // EDITA SOLO ESTOS VALORES: Firebase Console > Project settings > Your apps > Web.
+  const firebaseConfig = {
+    apiKey: 'AIzaSyBYOTFNfZ2DC5tYncRXtozuX5ZU3TM6EOo',
+    authDomain: 'fir-residuos.firebaseapp.com',
+    projectId: 'fir-residuos',
+    appId: '1:612249509959:web:6394e75a7521484f671162'
+  };
+
+  const $ = id => document.getElementById(id);
+  const status = (mensaje, error=false) => { $('estado').textContent = mensaje; $('estado').className = error ? 'status error' : 'status'; };
+  const hoy = (offset=0) => {
+    const d = new Date(); d.setDate(d.getDate()-offset);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  };
+  $('fecha').value = hoy();
+  const numero = n => new Intl.NumberFormat('es-MX',{maximumFractionDigits:2}).format(n);
+
+  if (Object.values(firebaseConfig).some(v => v.startsWith('PON_AQUI'))) {
+    status('Falta pegar la configuración de Firebase en index.html.',true);
+  } else {
+    try {
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const registros = collection(db,'residuos_demo');
+      await signInAnonymously(auth);
+      $('guardar').disabled = false;
+      $('ejemplos').disabled = false;
+      status('Conectado: lo que guardes aparecerá en otros dispositivos.');
+
+      onSnapshot(registros, snapshot => {
+        const datos = snapshot.docs.map(d => ({id:d.id,...d.data()}));
+        datos.sort((a,b) => b.fecha.localeCompare(a.fecha));
+        const tabla = $('tabla'); tabla.replaceChildren();
+        if (!datos.length) {
+          const tr=document.createElement('tr'); const td=document.createElement('td');
+          td.colSpan=4; td.textContent='Todavía no hay registros.'; tr.appendChild(td); tabla.appendChild(tr);
+        }
+        for (const r of datos.slice(0,50)) {
+          const tr=document.createElement('tr');
+          for (const dato of [r.fecha,r.planta,r.residuo,numero(r.kg)]) {
+            const td=document.createElement('td');td.textContent=dato;tr.appendChild(td);
+          }
+          tabla.appendChild(tr);
+        }
+        $('total').textContent = `${numero(datos.reduce((s,r)=>s+r.kg,0))} kg`;
+        $('conteo').textContent = `${datos.length} registros · mostrando hasta 50`;
+      }, e => status(`Error al leer datos: ${e.message}`,true));
+
+      $('formulario').addEventListener('submit',async e => {
+        e.preventDefault();$('guardar').disabled=true;
+        try {
+          const residuo=$('residuo').value.trim(); const kg=Number($('kg').value);
+          if (!residuo || kg<=0 || kg>10000) throw new Error('Revisa el residuo y los kg.');
+          await addDoc(registros, {fecha:$('fecha').value,planta:$('planta').value,residuo,kg,creadoEn:serverTimestamp()});
+          $('residuo').value='';$('kg').value='';status('✅ Registro guardado en Firebase.');
+        } catch(err) {status(`No se guardó: ${err.message}`,true);}
+        finally {$('guardar').disabled=false;}
+      });
+
+      $('ejemplos').addEventListener('click',async () => {
+        $('ejemplos').disabled=true;
+        const muestras=[
+          {fecha:hoy(2),planta:'G1',residuo:'Aceite usado',kg:40},
+          {fecha:hoy(1),planta:'G2',residuo:'Trapos contaminados',kg:12.5},
+          {fecha:hoy(),planta:'CF',residuo:'Arena usada',kg:80}
+        ];
+        try {
+          for(let i=0;i<muestras.length;i++) {
+            const ref=doc(db,'residuos_demo',`ejemplo_0${i+1}`);
+            if (!(await getDoc(ref)).exists()) await setDoc(ref,{...muestras[i],creadoEn:serverTimestamp()});
+          }
+          status('✅ Datos de ejemplo cargados (sin duplicarlos).');
+        } catch(err) {status(`No se pudieron cargar los ejemplos: ${err.message}`,true);}
+        finally {$('ejemplos').disabled=false;}
+      });
+    } catch(e) {status(`No se pudo conectar: ${e.message}`,true);}
+  }
+</script>
+</body>
+</html>

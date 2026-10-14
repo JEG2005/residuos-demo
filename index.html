@@ -65,7 +65,7 @@ import {getFirestore,collection,doc,getDoc,onSnapshot,serverTimestamp,writeBatch
 const firebaseConfig = {
   apiKey:'AIzaSyBYOTFNfZ2DC5tYncRXtozuX5ZU3TM6EOo',
   authDomain:'fir-residuos.firebaseapp.com',
-  projectId:'fir-residuos
+  projectId:'fir-residuos',
   appId:'1:612249509959:web:6394e75a7521484f671162'
 };
 
@@ -128,4 +128,3 @@ onSnapshot(collection(db,'residuos_v2_salidas'),snap=>{salidas=snap.docs.map(d=>
 }catch(ex){estado('No se pudo conectar: '+ex.message,true);}}
 </script>
 </body></html>
-
